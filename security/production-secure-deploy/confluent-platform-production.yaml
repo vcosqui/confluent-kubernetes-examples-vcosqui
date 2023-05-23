@@ -4,6 +4,8 @@ metadata:
   name: zookeeper
   namespace: confluent
 spec:
+  metrics:
+    prometheus:
   replicas: 3
   image:
     application: confluentinc/cp-zookeeper:7.3.0
@@ -23,11 +25,19 @@ metadata:
   name: kafka
   namespace: confluent
 spec:
+  metrics:
+    prometheus:
   replicas: 3
   image:
     application: confluentinc/cp-server:7.3.0
     init: confluentinc/confluent-init-container:2.5.0
   dataVolumeCapacity: 10Gi
+  configOverrides:
+    server:
+      - authorizer.class.name=io.confluent.kafka.security.authorizer.ConfluentServerAuthorizer
+    log4j:
+      - log4j.logger.io.confluent.security.auth=TRACE
+      - log4j.logger.io.confluent.rbacapi=TRACE
   tls:
     secretRef: tls-group1
   listeners:
